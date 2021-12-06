@@ -12,7 +12,6 @@ def is_retweet(tweet) -> bool:
         #prova a sollevare un'eccezione accedendo a campi definiti
         #sse si tratta di un retweet
         tweet.retweeted_status.full_text
-        print('ATTENZIONE CAZZOOOOO QUA CE UN RETWEET')
         return True
     #se non è un retweet retweeted_status non è definito e si entra qui dentro
     except AttributeError:
@@ -24,6 +23,7 @@ def dictify_user(user) -> dict:
         del record di user ottenuto dallo status di un tweet"""
     user_dict = { }
     user_dict['screen_name'] = user.screen_name
+    user_dict['profile_image_url_https'] = user.profile_image_url_https
     return user_dict
 
 
@@ -40,19 +40,13 @@ def dictify_single_tweet(tweet) -> dict:
     return tweet_dict
 
 
-def dictify_tweets(tweets) -> dict[dict]:
-    """ Ritorna una rappresentazione in forma di dizionario di python
-        di tweets. Il dizionario è indicizzato su interi da 0 a n come
-        fosse una lista"""
-    #tweets_list = {}
+def listify_tweets(tweets) -> list[dict]:
+    """ Ritorna una rappresentazione in forma di lista di tweets"""
     tweets_list = []
-    i = 0
 
     for tweet in tweets:
         tweet_dict = dictify_single_tweet(tweet)
         tweets_list.append(tweet_dict)
-        #tweets_list[i] = tweet_dict
-        i += 1
 
     return tweets_list
 
@@ -107,7 +101,7 @@ def search_by_content(content: str, amount: int = MAX_TWEETS) -> dict[dict]:
         I tweets sono ritornati in una lista sottoforma di dizionario"""
     query = content + f'-from:{content} -filter:retweets'
     found_tweets = api.search_tweets(query, tweet_mode='extended', count=amount)
-    return dictify_tweets(found_tweets)
+    return listify_tweets(found_tweets)
 
 
 def search_by_username(username: str, amount: int = MAX_TWEETS) -> dict[dict]:
@@ -118,4 +112,4 @@ def search_by_username(username: str, amount: int = MAX_TWEETS) -> dict[dict]:
         I tweets sono ritornati in una lista sottoforma di dizionario"""
     query = f'from:{username} -filter:retweets'
     found_tweets = api.search_tweets(query, tweet_mode='extended', count=amount)
-    return dictify_tweets(found_tweets)
+    return listify_tweets(found_tweets)
