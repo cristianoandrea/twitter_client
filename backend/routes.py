@@ -1,4 +1,5 @@
 import flask as fl
+from flask_cors import CORS
 import os
 
 import twitter_client as tc
@@ -8,7 +9,9 @@ CONTENT_MODE = 'content'
 USER_MODE = 'user'
 BUILD_DIR = '../frontend/build/'
 server = fl.Flask(__name__, template_folder=FRONT_DIR, static_folder=BUILD_DIR)
-
+#serve per eliminare i problemi di richieste a porte diverse in fase
+#di testing
+CORS(server)
 
 @server.route('/', defaults={'path': ''})
 @server.route('/<path:path>')
@@ -29,9 +32,12 @@ def tweets():
     mode = fl.request.args.get('mode')
     query = fl.request.args.get('by')
     amount = fl.request.args.get('amount')
+    print(f'mode={mode}', f'query={query}', f'amount={amount}')
     if amount == None or amount == '':
         amount = tc.MAX_TWEETS
 
+    if not mode:
+        pass
     if mode == CONTENT_MODE:
         content = tc.search_by_content(query, amount)
     elif mode == USER_MODE:
