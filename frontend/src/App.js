@@ -28,7 +28,7 @@ class InputForm extends Component {
   render() {
     return (
       <Box  sx={{ p: 2, marginTop: '3'}}>
-        <form >
+        <form method="GET" action="/">
           <Grid container spacing={2} >
             <Grid
               item
@@ -47,7 +47,7 @@ class InputForm extends Component {
                   defaultValue="female"
                   name="mode"
                 >
-                  <FormControlLabel value="content" control={<Radio />} label="Contenuto" />
+                  <FormControlLabel value="content" control={<Radio />} label="Contenuto" checked/>
                   <FormControlLabel value="user" control={<Radio />} label="Utente" />
                 </RadioGroup>
               </FormControl>
@@ -77,8 +77,12 @@ class InputForm extends Component {
               }}
             >
 
-              <Typography variant="body1" gutterBottom>
-                <pre>Quantità    </pre>
+              <Typography
+                variant="body1"
+                gutterBottom
+                sx={{marginRight: 2}}
+              >
+                Quantità
               </Typography>
               <Slider
                 aria-label="Always visible"
@@ -117,20 +121,6 @@ class App extends Component {
     this.state = {
       tweetsLoaded: false
     }
-    this.tweets = [
-      {
-        full_text: "ciao bello",
-        user: {
-          screen_name: "Fragolone"
-        }
-      },
-      {
-        full_text: "bella pirataaaaa",
-        user: {
-          screen_name: "LelloMcTello"
-        }
-      }
-    ];
     this.tweets = [ ];
   }
 
@@ -138,7 +128,7 @@ class App extends Component {
     var index = window.location.href.indexOf('?');
     if (index != -1) {
       var queryString = window.location.href.substr(index);
-      fetch(`/tweets${queryString}`, {
+      fetch(`http://localhost:5000/tweets${queryString}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json'
