@@ -1,49 +1,37 @@
 import { Component } from 'react';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import Avatar from '@mui/material/Avatar';
-import Card from '@mui/material/Card';
-import CardHeader from '@mui/material/CardHeader';
-import CardContent from '@mui/material/CardContent';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import Divider from '@mui/material/Divider';
+import { FixedSizeList } from 'react-window';
 
-class Tweet extends Component {
+import ListItemButton from '@mui/material/ListItemButton';
+import ListItemText from '@mui/material/ListItemText';
+import Box from '@mui/material/Box';
+
+import Tweet from './Tweet';
+
+class TweetList extends Component {
   constructor(props) {
     super(props);
-    this.tweet = props.content;
+    this.tweets = props.tweets;
   }
 
   render() {
-    /*<Box component="span" sx={{ p: 2}}>
-      <Typography variant="h5" gutterBottom component="div">
-        @{this.tweet.user.screen_name}
-      </Typography>
-      <Typography variant="body1" gutterBottom>
-        {this.tweet.full_text}
-      </Typography>
-    </Box>*/
-    /*}<CardMedia
-      component="img"
-      height="194"
-      image="/static/images/cards/paella.jpg"
-      alt="Paella dish"
-    />*/
     return (
-      <Card sx={{ maxWidth: 345 }}>
-        <CardHeader
-          avatar={
-            <Avatar src={this.tweet.user.profile_image_url_https} />
-          }
-          title={this.tweet.user.screen_name}
-        />
-
-        <CardContent>
-          <Typography variant="body2">
-            {this.tweet.full_text}
-          </Typography>
-        </CardContent>
-      </Card>
+        <List>
+          {this.tweets.map((tweet, index) => {
+            return (
+              <div>
+                <ListItem key={index}>
+                  <Tweet content={tweet}></Tweet>
+                </ListItem>
+                <Divider />
+              </div>
+            );
+          })}
+        </List>
     );
   }
 }
 
-export default Tweet;
+export default TweetList;
