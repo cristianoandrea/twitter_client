@@ -1,9 +1,5 @@
-import logo from './logo.svg';
 import './App.css';
 import { Component } from 'react';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import Divider from '@mui/material/Divider';
 import Grid from '@mui/material/Grid';
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
@@ -15,14 +11,18 @@ import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import Slider from '@mui/material/Slider';
 import Typography from '@mui/material/Typography';
+import InputLabel from '@mui/material/InputLabel';
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
 
-import Tweet from './components/Tweet'
+import TweetList from './components/TweetList';
+import WordCloud from './components/WordCloud';
 
 
 class InputForm extends Component {
   constructor(props) {
     super(props);
-    this.father = props.father;
+    //this.father = props.father;
   }
 
   render() {
@@ -115,18 +115,31 @@ class InputForm extends Component {
 }
 
 
-class App extends Component {
+class Controller extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      tweetsLoaded: false
+      tweetsLoaded: false,
+      viewMethod: '',
+      viewContent: ''
     }
+    //la lista dei tweet ottenuti
     this.tweets = [ ];
+
+    //possibili metodi di visualizzazione dei risultati
+    this.displayMethods = [
+      "tweet", "wordCloud", "map"
+    ]
+    this.displayMethodsPrettyfied = {
+      tweet: "Tweet",
+      wordCloud: "Word Cloud",
+      map: "Mappa"
+    }
   }
 
   componentDidMount() {
     var index = window.location.href.indexOf('?');
-    if (index != -1) {
+    if (index !== -1) {
       var queryString = window.location.href.substr(index);
       fetch(`http://localhost:5000/tweets${queryString}`, {
         method: 'GET',
@@ -146,40 +159,60 @@ class App extends Component {
     }
   }
 
+  swapViewMethod(event) {
+    console.log(event);
+    var updateView = {};
+
+    updateView.viewMethod = event.target.value;
+    switch (event.target.value) {
+      case "tweet":
+        updateView.viewContent = <TweetList tweets={this.tweets} />;
+        break;
+      case "wordCloud":
+        updateView.viewContent = <TweetList tweets={this.tweets} />;
+        break;
+      default:
+        break;
+    }
+    this.setState(updateView);
+  }
+
   render() {
     return (
       <div className="App">
-        {/*}<header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>*/}
+        {/*componente che permette di selezionare i filtri per i tweet da mostrare*/}
         <InputForm father={this}/ >
-        <List component="nav" aria-label="mailbox folders">
-          {this.tweets.map((tweet, index) => {
-            return (
-              <div>
-                <ListItem button>
-                  <Tweet content={tweet}></Tweet>
-                </ListItem>
-                <Divider />
-              </div>
-            );
-          })}
-        </List>
+
+        <Grid container>
+          <Grid item xs={12} md={2}>
+          <Box sx={{ minWidth: 120 }}>
+            <FormControl fullWidth>
+              <InputLabel id="view-method-select-label">Visualizzazione</InputLabel>
+              <Select
+                labelId="view-method-select-label"
+                id="view-method-select"
+                label="Visualizzazione"
+                value={this.state.viewMethod}
+                onChange={this.swapViewMethod.bind(this)}
+              >
+                {this.displayMethods.map((method) => {
+                  return (
+                    <MenuItem value={method}>{this.displayMethodsPrettyfied[method]}</MenuItem>
+                  );
+                })}
+              </Select>
+            </FormControl>
+          </Box>
+          </Grid>
+
+          <Grid item xs={12} md={10}>
+            {this.state.viewContent}
+          </Grid>
+        </Grid>
       </div>
     );
   }
 }
 
 
-export default App;
+export default Controller;
