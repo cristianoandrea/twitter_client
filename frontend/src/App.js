@@ -15,8 +15,11 @@ import InputLabel from '@mui/material/InputLabel';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 
+import { BrowserRouter, Routes, Route, Outlet, Link } from "react-router-dom";
+
 import TweetList from './components/TweetList';
 import WordCloud from './components/WordCloud';
+import Navbar from './components/Navbar'
 
 
 class InputForm extends Component {
@@ -115,7 +118,7 @@ class InputForm extends Component {
 }
 
 
-class Controller extends Component {
+class TwitterSection extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -179,14 +182,19 @@ class Controller extends Component {
 
   render() {
     return (
-      <div className="App">
+      <div>
+
         {/*componente che permette di selezionare i filtri per i tweet da mostrare*/}
-        <InputForm father={this}/ >
+        <InputForm father={this} sx={{marginTop: 100}} />
 
         <Grid container>
           <Grid item xs={12} md={2}>
           <Box sx={{ minWidth: 120 }}>
-            <FormControl fullWidth>
+            <FormControl
+              sx={{
+                width: '85%'
+              }}
+            >
               <InputLabel id="view-method-select-label">Visualizzazione</InputLabel>
               <Select
                 labelId="view-method-select-label"
@@ -209,10 +217,50 @@ class Controller extends Component {
             {this.state.viewContent}
           </Grid>
         </Grid>
+
       </div>
     );
   }
 }
 
 
-export default Controller;
+class Trivia extends Component {
+  constructor(props) {
+    super(props);
+
+  }
+
+  componentDidMount() {
+
+  }
+
+  render() {
+    return(
+      <div>ciao</div>
+    );
+  }
+}
+
+
+class App extends Component {
+  render() {
+    return (
+      <div className="App">
+        <Navbar />
+
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<TwitterSection />} />
+            <Route path="/twitter" element={<TwitterSection />} />
+            <Route path="/trivia" element={<Trivia />} />
+            <Route path="/contest" element={<div>vuoto</div>} />
+          </Routes>
+        </BrowserRouter>
+
+      </div>
+    );
+  }
+}
+
+
+export default App;
