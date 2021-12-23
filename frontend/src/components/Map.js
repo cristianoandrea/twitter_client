@@ -7,7 +7,22 @@ import { MapsComponent, LayersDirective, LayerDirective } from '@syncfusion/ej2-
 class Map extends React.Component {
   constructor(props) {
     super(props);
-    //tuo costruttore
+    this.tweets = [
+      {
+        user: {
+          screen_name: 'nome',
+          profile_image_url_https: 'url immagine'
+        },
+        retweeted_status: {},
+        full_text: ''
+      },
+      {
+        //uguale a sopra
+      },
+      {
+        //uguale a sopra
+      }
+    ]
   }
 
   componentDidMount() {
