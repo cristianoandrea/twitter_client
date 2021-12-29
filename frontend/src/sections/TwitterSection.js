@@ -15,15 +15,15 @@ import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 
 import TweetList from '../components/TweetList';
-import WordCloud from '../components/WordCloud';
+import WordCl from '../components/WordCl';
 
 
 
 class InputForm extends Component {
-  constructor(props) {
+  /*constructor(props) {
     super(props);
     //this.father = props.father;
-  }
+  }*/
 
   render() {
     return (
@@ -169,7 +169,7 @@ class TwitterSection extends Component {
         updateView.viewContent = <TweetList tweets={this.tweets} />;
         break;
       case "wordCloud":
-        updateView.viewContent = <TweetList tweets={this.tweets} />;
+        updateView.viewContent = <WordCl tweets={this.tweets} />;
         break;
       default:
         break;
