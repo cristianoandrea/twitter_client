@@ -11,8 +11,7 @@ test('renders learn react link', () => {
 test('has correct input value', () => {  //test che verifica se l'input è corretto
   render(<App />)
   expect(screen.getByRole('form')).toHaveFormValues({
-    //firstName: 'John',
-    //lastName: 'Doe',
+    queryString: window.location.href.substr(index),
   })
 })
 
