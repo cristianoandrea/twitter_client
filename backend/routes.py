@@ -3,6 +3,7 @@ from flask_cors import CORS
 import os
 
 import twitter_client as tc
+import trivia
 
 FRONT_DIR = '../frontend/'
 CONTENT_MODE = 'content'
@@ -45,6 +46,18 @@ def tweets():
 
     return fl.jsonify(content)
 
+
+@server.route('/question', methods=['POST'])
+def post_question():
+    quiz = fl.request.form.get('quiz')
+    right = fl.request.form.get('right')
+    wrongs = fl.request.form.getlist('wrongs')
+    new_question = trivia.add_question(quiz, right, wrongs)
+
+    response = {}
+    response['id'] = new_question.id
+    response['suggested'] = new_question.suggested_text
+    return response
 
 @server.errorhandler(404)
 def not_found():
