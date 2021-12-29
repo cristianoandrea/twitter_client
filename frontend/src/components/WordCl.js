@@ -89,9 +89,9 @@ class WordCl extends Component {
                   fontSize={(word) => Math.log2(word.value) * 15}
                   width={600}
                   height={300}
-                  font="Times"
-                  fontStyle="italic"
-                  fontWeight="bold"
+                  font="Roboto"
+                  //fontStyle="italic"
+                  //fontWeight="bold"
                 />
       :
         ''
