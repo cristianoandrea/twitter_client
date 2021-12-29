@@ -15,9 +15,16 @@ test('has correct input value', () => {  //test che verifica se l'input è corre
   })
 })
 
-test('handles click correctly', () => {  //test user event, vede cosa succede quando l'user usa il componente
+test('handles click button content correctly', () => {  //test user event, vede cosa succede quando l'user usa il componente
+//test per controllo sul bottone filtro ricerca per contenuto
   render(<FormControl />)
-
   userEvent.click(screen.getByText('Contenuto'))
   expect(screen.getByLabelText('Contenuto')).toBeChecked()
+})
+
+test('handles click button user correctly', () => {  //test user event, vede cosa succede quando l'user usa il componente
+//test per controllo filtro ricerca per nome utente
+  render(<FormControl />)
+  userEvent.click(screen.getByText('Utente'))
+  expect(screen.getByLabelText('Utente')).toBeChecked()
 })
