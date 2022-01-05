@@ -19,6 +19,17 @@ def is_retweet(tweet) -> bool:
         return False
 
 
+def text_from_dict(tweet_dict: dict) -> str:
+    """ Ritorna il testo contenuto del tweet sotto forma di dizionario, così
+        come è creato dalla funzione dictify_single_tweet. Nel caso il tweet
+        dovesse essere quello di un retweet ritorna il testo del tweet
+        originale"""
+    if is_retweet(tweet_dict):
+        return tweet_dict['retweeted_status.full_text']
+    else:
+        return tweet_dict['full_text']
+
+
 def dictify_user(user) -> dict:
     """ Ritorna una rappresentazione in forma di dizionario di python
         del record di user ottenuto dallo status di un tweet"""
@@ -98,16 +109,27 @@ def inutile():
     pass
 
 
-def search_by_content(content: str, amount: int = MAX_TWEETS) -> list[dict]:
+def make_query(query: str, amount: int = MAX_TWEETS) -> list[dict]:
+    """ Helper function che effettua effettivamente la richiesta ai server
+        di twitter e ritorna una lista di dizionari che rappresentano gli
+        oggetti"""
+    found_tweets = api.search_tweets(
+        query, tweet_mode='extended', count=amount)
+    return listify_tweets(found_tweets)
+
+
+def search_by_content(content: str, amount: int = MAX_TWEETS, remove_user: bool = True) -> list[dict]:
     """ Interroga l'API di twitter per la ricerca di tweet che nel loro testo
         includono content. Il numero di tweet richiesti è specificato da amount
         settato di default a MAX_TWEETS, il massimo; qualsiasi quantitativo
         superiore sarà limitato a MAX_TWEETS.
         I tweets sono ritornati in una lista sottoforma di dizionario"""
-    query = content + f'-from:{content} -filter:retweets'
-    found_tweets = api.search_tweets(
-        query, tweet_mode='extended', count=amount)
-    return listify_tweets(found_tweets)
+    query = content
+    if remove_user:
+        query += f' -from:{content}'
+    query += ' -filter:retweets'
+
+    return make_query(query, amount)
 
 
 def search_by_username(username: str, amount: int = MAX_TWEETS) -> list[dict]:
@@ -117,6 +139,13 @@ def search_by_username(username: str, amount: int = MAX_TWEETS) -> list[dict]:
         superiore sarà limitato a MAX_TWEETS.
         I tweets sono ritornati in una lista sottoforma di dizionario"""
     query = f'from:{username} -filter:retweets'
-    found_tweets = api.search_tweets(
-        query, tweet_mode='extended', count=amount)
-    return listify_tweets(found_tweets)
+    return make_query(query, amount)
+
+
+def search_by_username_with_content(username: str, content: str, amount: int = MAX_TWEETS) -> list[dict]:
+    query = f'{content} from:{username} -filter:retweets'
+    return make_query(query, amount)
+
+
+def search_by_hashtag():
+    pass
