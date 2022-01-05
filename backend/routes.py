@@ -14,6 +14,7 @@ server = fl.Flask(__name__, template_folder=FRONT_DIR, static_folder=BUILD_DIR)
 #di testing
 CORS(server)
 
+
 @server.route('/', defaults={'path': ''})
 @server.route('/<path:path>')
 def serve(path):
@@ -51,13 +52,39 @@ def tweets():
 def post_question():
     quiz = fl.request.form.get('quiz')
     right = fl.request.form.get('right')
-    wrongs = fl.request.form.getlist('wrongs')
+    wrongs = fl.request.form.getlist('wrongs[]')
     new_question = trivia.add_question(quiz, right, wrongs)
 
     response = {}
     response['id'] = new_question.id
-    response['suggested'] = new_question.suggested_text
+    response['suggested_text'] = new_question.suggested_text
     return response
+
+
+@server.route('/answers', methods=['GET'])
+def get_number_of_answers():
+    trivia_id = fl.request.args.get('triviaId')
+    how_many = -1
+    if trivia.is_registered(trivia_id):
+        answers = tc.search_by_content(f'{trivia.ANSWER_TAG} #{trivia_id}')
+        how_many = len(answers)
+
+    return str(how_many)
+
+
+@server.route('/score', methods=['GET'])
+def score_of():
+    username = fl.request.args.get('username')
+    answers = tc.search_by_username_with_content(username, trivia.ANSWER_TAG)
+    return str(trivia.total_score(answers))
+
+
+@server.route('/myAnswers', methods=['GET'])
+def answers_of():
+    username = fl.request.args.get('username')
+    answers = tc.search_by_username_with_content(username, trivia.ANSWER_TAG)
+    return fl.jsonify(answers)
+
 
 @server.errorhandler(404)
 def not_found():
