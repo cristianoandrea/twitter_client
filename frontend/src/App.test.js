@@ -27,15 +27,7 @@ test('handles click user button correctly', () => {  //test user event, vede cos
 })
 
 
-describe('wordcloud',()=>{
-  it('user can render wordcloud', ()=>{
-    //screen.findByRole('radio', {  name: /contenuto/i}).check();
-    screen.findByRole('textbox', {  name: /standard/i}).type('Roma');
-    screen.findByRole('button', {  name: /cerca/i}).check();
-    screen.findByRole('button', {  name: /visualizzazione ​/i}).check();
-    screen.findByRole('option', {  name: /word cloud/i}).check();
-    screen.findByRole('button', {  name: /show wordcloud/i}).check();
-  })})
+
 
 
 /*test('handles click place button correctly', () => {  //test user event, vede cosa succede quando l'user usa il componente
