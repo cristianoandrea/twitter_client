@@ -112,7 +112,7 @@ def register_contest(organizer: str, name: str) -> Contest:
     contests[c.id] = c
     next_contest_id += 1
     #memorizzarlo su disco
-    #save_contests()
+    save_contests()
 
     return c
 
