@@ -4,6 +4,8 @@ import os
 
 import twitter_client as tc
 import trivia
+import contest
+
 
 FRONT_DIR = '../frontend/'
 CONTENT_MODE = 'content'
@@ -84,6 +86,20 @@ def answers_of():
     username = fl.request.args.get('username')
     answers = tc.search_by_username_with_content(username, trivia.ANSWER_TAG)
     return fl.jsonify(answers)
+
+
+@server.route('/contests', methods=['POST'])
+def post_contest():
+    organizer = fl.request.form.get('organizer')
+    new_contest = contest.register_contest(organizer)
+    return new_contest.toDict()
+
+
+def post_tale():
+    creator = fl.request.form.get('creator')
+    text = fl.request.form.get('text')
+    new_tale = contest.register_tale(creator, text)
+    return new_tale.toDict()
 
 
 @server.errorhandler(404)
