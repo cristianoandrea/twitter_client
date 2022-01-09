@@ -91,15 +91,32 @@ def answers_of():
 @server.route('/contests', methods=['POST'])
 def post_contest():
     organizer = fl.request.form.get('organizer')
-    new_contest = contest.register_contest(organizer)
+    name = fl.request.form.get('name')
+    new_contest = contest.register_contest(organizer, name)
     return new_contest.toDict()
 
 
+@server.route('/tales', methods=['POST'])
 def post_tale():
-    creator = fl.request.form.get('creator')
-    text = fl.request.form.get('text')
-    new_tale = contest.register_tale(creator, text)
+    creator: str = fl.request.form.get('creator')
+    text: str = fl.request.form.get('text')
+    new_tale: str = contest.register_tale(creator, text)
     return new_tale.toDict()
+
+
+@server.route('/tales', methods=['POST'])
+def add_tale_to_contest():
+    tale_id: str = fl.request.form.get('tale')
+    contest_id: str = fl.request.form.get('contest')
+    retVal = None
+    #controllare che gli id siano registrati
+    if contest.is_tale_registered(int(tale_id)) and contest.is_contest_registered(int(contest_id)):
+        contest.add_tale_to(tale_id, contest_id)
+    else:
+        #assegnare retVal
+        pass
+
+    return retVal
 
 
 @server.errorhandler(404)
