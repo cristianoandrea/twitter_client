@@ -28,11 +28,15 @@ class Tale:
         d['text'] = self.text
         return d
 
+    @staticmethod
+    def fromDict(d: dict):
+        return Tale(d['id'], d['creator'], d['text'])
+
 
 class Contest:
-    def __init__(self, id, tales: list[str], organizer: str, name: str):
+    def __init__(self, id, tales: list, organizer: str, name: str):
         self._id = id
-        self._tales: list[str] = tales
+        self._tales: list = tales
         self._organizer: str = organizer
         self._name: str = name
 
@@ -52,6 +56,10 @@ class Contest:
     def name(self):
         return self._name
 
+    @property
+    def is_active(self):
+        return True
+
     def add_tale(self, tale: Tale):
         self._tales.append(tale)
 
@@ -62,6 +70,10 @@ class Contest:
         d['organizer'] = self.organizer
         d['name'] = self.name
         return d
+
+    @staticmethod
+    def fromDict(d: dict):
+        return Contest(d['id'], d['tales'], d['organizer'], d['name'])
 
 
 next_contest_id: int = 0
@@ -74,15 +86,23 @@ tales: dict[int, Tale] = {}
 def module_init():
     global initialized
 
+    for tale_dict in dbmanager.load_tales():
+        tale = Tale.fromDict(tale_dict)
+        tales[tale.id] = tale
+
     if not initialized:
+        for contest_dict in dbmanager.load_contests():
+            contest = Contest.fromDict(contest_dict)
+            contests[contest.id] = contest
 
         initialized = True
 
 
-def get_contest_list() -> list[dict]:
+def get_contest_list(active=False) -> list[dict]:
     l: list[dict] = []
     for contest in contests.values():
-        l.append(contest.toDict())
+        if contest.is_active:
+            l.append(contest.toDict())
 
     return l
 
@@ -112,7 +132,7 @@ def register_contest(organizer: str, name: str) -> Contest:
     contests[c.id] = c
     next_contest_id += 1
     #memorizzarlo su disco
-    save_contests()
+    #save_contests()
 
     return c
 
@@ -128,18 +148,18 @@ def register_tale(creator: str, text: str):
     return t
 
 
-def add_tale_to(tale_id: str, contest_id: str):
+def add_tale_to(tale_id: int, contest_id: int):
     c: Contest = contests[contest_id]
-    c.append(tale_id)
+    c.tales.append(tale_id)
     save_contests()
 
 
 def is_tale_registered(tale_id: int) -> bool:
-    return tale_id in tales.values()
+    return tale_id in tales
 
 
 def is_contest_registered(contest_id: int) -> bool:
-    return contest_id in contests.values()
+    return contest_id in contests
 
 
 module_init()
