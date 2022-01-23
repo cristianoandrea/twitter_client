@@ -96,6 +96,11 @@ def post_contest():
     return new_contest.toDict()
 
 
+@server.route('/contests', methods=['GET'])
+def get_contests():
+    return fl.jsonify(contest.get_contest_list(True))
+
+
 @server.route('/tales', methods=['POST'])
 def post_tale():
     creator: str = fl.request.form.get('creator')
@@ -104,19 +109,19 @@ def post_tale():
     return new_tale.toDict()
 
 
-@server.route('/tales', methods=['POST'])
+@server.route('/contests/tales', methods=['POST'])
 def add_tale_to_contest():
-    tale_id: str = fl.request.form.get('tale')
-    contest_id: str = fl.request.form.get('contest')
+    tale_id: int = int(fl.request.form.get('tale'))
+    contest_id: int = int(fl.request.form.get('contest'))
     retVal = None
     #controllare che gli id siano registrati
-    if contest.is_tale_registered(int(tale_id)) and contest.is_contest_registered(int(contest_id)):
+    if contest.is_tale_registered(tale_id) and contest.is_contest_registered(contest_id):
         contest.add_tale_to(tale_id, contest_id)
+        retVal = True
     else:
-        #assegnare retVal
-        pass
+        retVal = False
 
-    return retVal
+    return fl.jsonify(retVal)
 
 
 @server.errorhandler(404)
