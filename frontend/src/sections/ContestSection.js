@@ -1,9 +1,16 @@
 import { Component } from 'react';
 import TextField from '@mui/material/TextField';
 import $ from 'jquery';
+import Card from '@mui/material/Card';
+import CardHeader from '@mui/material/CardHeader';
+import CardActions from '@mui/material/CardActions';
+import CardContent from '@mui/material/CardContent';
+import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 
 import FunctionButton from '../components/FunctionButton';
+import SubmitButton from '../components/SubmitButton';
+import ResponseDialog from '../components/ResponseDialog';
 
 
 
@@ -34,28 +41,211 @@ class VoteInstatiator extends Component {
 }
 
 
+class ContestCard extends Component {
+  constructor(props) {
+    super(props);
+    this.contest = props.contest;
+    this.state = {
+      dialogOpen: false
+    }
+    this.post = {
+      tale: '',
+      contest: this.contest.id
+    }
+  }
+
+  textFieldChange(e) {
+    var id = e.target.id;
+    this.post[id] = e.target.value;
+  }
+
+  postSubmit() {
+    console.log("post submit")
+    $.post('http://localhost:5000/contests/tales', this.post, (response) => {
+      console.log(response);
+      if (response) {
+        this.object = response;
+        this.setState({
+          dialogOpen: true,
+          tale: response
+        });
+      }
+    });
+  }
+
+  closeDialog() {
+    this.setState({
+      dialogOpen: false
+    });
+  }
+
+  render() {
+    return(
+      <Card
+        sx={{
+          minWidth: 275,
+          maxWidth:400,
+          margin: 3
+        }}
+      >
+        <CardHeader
+          title={`${this.contest.name} (${this.contest.id})`}
+        />
+        <CardContent>
+          <Typography>
+            {`Organizzatore: ${this.contest.organizer}`}
+          </Typography>
+          <Typography>
+            {`Racconti inseriti: ${this.contest.tales.length}`}
+          </Typography>
+        </CardContent>
+        <CardActions>
+          <TextField
+            id="tale"
+            label="Nuovo racconto"
+            variant={'outlined'}
+            onChange={this.textFieldChange.bind(this)}
+            sx={{
+              margin: 1
+            }}
+          />
+          <Button
+            size="small"
+            onClick={this.postSubmit.bind(this)}
+          >
+            Aggiungi un racconto
+          </Button>
+        </CardActions>
+
+        <ResponseDialog
+          title={"Racconto inserito con successo!"}
+          content={`Il racconto con id ${this.post.tale} è stato aggiunto al contest con id
+            ${this.contest.id}. Ora vediamo quanti lo voteranno`}
+          open={this.state.dialogOpen}
+          close={this.closeDialog.bind(this)}
+        />
+      </Card>
+    );
+  }
+}
+
+
 class ContestList extends Component {
-  /*questo componente deve fare una richiesta al server per ottenere la
-  lista di tutti i contest e visualizzarne le informazioni, può essere
-  utile definire un altro componente per creare la scheda di un singolo
-  contest*/
+  constructor(props) {
+    super(props);
+    this.state = {
+      contests: []
+    }
+  }
+
+  componentDidMount() {
+    $.get('http://localhost:5000/contests', (response) => {
+      if (response) {
+        this.setState({
+          contests: response
+        });
+        console.log(response);
+      }
+    })
+  }
 
   render() {
     return (
-      <div />
+      <div>
+        {this.state.contests.map((contest, idx) => {
+          return (
+            <ContestCard
+              key={idx}
+              contest={contest}
+            />
+          );
+        })}
+      </div>
     );
   }
 }
 
 
 class TaleInstantiator extends Component {
-  /*Questo componente viene pressocché uguale a ContestInstatiator, quindi
-  ci vuole qualche TextField per registrare l'utente twitter creatore per
-  del racconto e uno multiline per contenuto del racconto*/
+  constructor(props) {
+    super(props);
+    this.state = {
+      dialogOpen: false,
+      tale: {}
+    }
+    this.tale = {
+      creator: '',
+      text: ''
+    };
+  }
+
+
+  closeDialog() {
+    this.setState({
+      dialogOpen: false
+    })
+  }
+
+
+  registerTale() {
+    $.post('http://localhost:5000/tales', this.tale, (response) => {
+      console.log(response);
+      if (response) {
+        this.object = response;
+        this.setState({
+          dialogOpen: true,
+          tale: response
+        });
+      }
+    });
+  }
+
+
+  textFieldChange(e) {
+    var id = e.target.id;
+    this.tale[id] = e.target.value;
+  }
+
 
   render() {
+    //console.log(this.state.dialogOpen);
+    var fields = {
+      creator: 'Scrittore',
+      text: 'Racconto'
+    }
+
     return (
-      <div />
+      <div>
+        {Object.keys(fields).map((field, idx) => {
+          return (
+            <div key={idx}><TextField
+              id={field}
+              label={fields[field]}
+              variant={'outlined'}
+              onChange={this.textFieldChange.bind(this)}
+              multiline
+              rows={field==='text' ? 4 : 1}
+              sx={{
+                width: (field === 'text' ? "90%" : undefined),
+
+                margin: 1
+              }}
+            /></div>
+          );
+        })}
+
+        <SubmitButton
+          onClick={this.registerTale.bind(this)}
+        />
+
+        <ResponseDialog
+          title={"Racconto registrato con successo!"}
+          content={`Abbiamo registrato il tuo racconto con l'id "${this.state.tale.id}", ora puoi cercare
+          dei contest attivi e inserire il tuo racconto. Ti auguro di vincerne tanti!`}
+          open={this.state.dialogOpen}
+          close={this.closeDialog.bind(this)}
+        />
+      </div>
     );
   }
 }
@@ -64,12 +254,20 @@ class TaleInstantiator extends Component {
 class ContestInstatiator extends Component {
   constructor(props) {
     super(props);
+    this.state = {
+      dialogOpen: false,
+      contest: {}
+    };
     this.contest = {
       organizer: '',
       name: ''
     };
+    this.object = {};
   }
 
+  closeDialog() {
+    this.setState({dialogOpen: false});
+  }
 
   textFieldChange(e) {
     var id = e.target.id;
@@ -79,41 +277,54 @@ class ContestInstatiator extends Component {
   registerContest() {
     $.post('http://localhost:5000/contests', this.contest, (response) => {
       console.log(response);
-      //aggiungere l'inserimento del componente di risposta e siamo a posto
+      if (response) {
+        this.object = response;
+        this.setState({
+          dialogOpen: true,
+          contest: response
+        });
+      }
     });
   }
 
   render() {
-    var ids = ['organizer', 'name'];
-    var tastis = ['Nome contest', 'Organizer'];
+    //var ids = ['organizer', 'name'];
+    //var tastis = ['Nome contest', 'Organizer'];
+    var tastis = {
+      organizer: 'Organizzatore',
+      name: 'Nome contest'
+    }
 
     return (
       <div>
-        {tastis.map((tasti, idx) => {
+        {Object.keys(tastis).map((tasti, idx) => {
           return (
             <TextField
-              id={ids[idx]}
+              id={tasti}
               key={idx}
-              label={tasti}
+              label={tastis[tasti]}
               variant={'outlined'}
               onChange={this.textFieldChange.bind(this)}
               sx={{
-                width: "90%",
-                marginTop: 1
+                //width: "90%",
+                margin: 1
               }}
             />
           );
         })}
 
-        <div><Button
-          variant="outlined"
+        <SubmitButton
           onClick={this.registerContest.bind(this)}
-          sx={{
-            marginTop: 2
-          }}
-        >
-          Registra (senza cinepresa)
-        </Button></div>
+        />
+
+        <ResponseDialog
+          title={"Concorso registrato con successo!"}
+          content={`Abbiamo registrato il tuo concorso con l'id "${this.state.contest.id}", ora non ti resta
+          che aspettare che qualche scrittore speranzioso lo trovi e decida di aggiungersi
+          quindi cerca di pubblicizzarlo un po'!`}
+          open={this.state.dialogOpen}
+          close={this.closeDialog.bind(this)}
+        />
       </div>
     );
   }
