@@ -110,6 +110,7 @@ class ContestCard extends Component {
             }}
           />
           <Button
+            id="submit-tale-button"
             size="small"
             onClick={this.postSubmit.bind(this)}
           >
