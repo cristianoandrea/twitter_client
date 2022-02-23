@@ -27,15 +27,36 @@ class ContestVisualizer extends Component {
 }
 
 
-class VoteInstatiator extends Component {
-  /*dev'esserci un form che permetta di registrare un tweet postato su
-  twitter come voto ufficiale, in modo da tenere traccia dei massimo 10
-  voti per contest. è il caso di farlo tra gli utlimi, dato che richiede
-  altro lavoro anche sul server*/
+class VoteVisualizer extends Component {
+  constructor(props) {
+    super(props);
+    this.id = props.id;
+    this.state = {
+      votes: {}
+    }
+    //this.id = '';
+  }
+
+  componentDidMount(){
+    console.log(this.id)
+    $.get(`http://localhost:5000/contests/votes?contest=${this.id}`, (peppecaccia) => {
+      //console.log(peppecaccia);
+      this.setState({votes: peppecaccia})
+    })
+  }
 
   render() {
     return (
-      <div />
+      <Card>
+        <Typography>Voti per racconto:</Typography>
+        {Object.keys(this.state.votes).map((tale, idx) => {
+          return (
+            <Typography key={idx}>
+              Racconto {tale}: {this.state.votes[tale]} voti
+            </Typography>
+          );
+        })}
+      </Card>
     );
   }
 }
@@ -118,6 +139,8 @@ class ContestCard extends Component {
           </Button>
         </CardActions>
 
+        <VoteVisualizer id={this.contest.id} />
+
         <ResponseDialog
           title={"Racconto inserito con successo!"}
           content={`Il racconto con id ${this.post.tale} è stato aggiunto al contest con id
@@ -145,12 +168,13 @@ class ContestList extends Component {
         this.setState({
           contests: response
         });
-        console.log(response);
       }
     })
   }
 
   render() {
+    console.log(this.state.contest);
+    console.log(typeof(this.state.contest));
     return (
       <div>
         {this.state.contests.map((contest, idx) => {
@@ -321,7 +345,7 @@ class ContestInstatiator extends Component {
         <ResponseDialog
           title={"Concorso registrato con successo!"}
           content={`Abbiamo registrato il tuo concorso con l'id "${this.state.contest.id}", ora non ti resta
-          che aspettare che qualche scrittore speranzioso lo trovi e decida di aggiungersi
+          che aspettare che qualche scrittore speranzoso lo trovi e decida di aggiungersi
           quindi cerca di pubblicizzarlo un po'!`}
           open={this.state.dialogOpen}
           close={this.closeDialog.bind(this)}
@@ -353,7 +377,7 @@ class ContestSection extends Component {
   }
 
   registerVote() {
-    this.setState({body: <VoteInstatiator />});
+    //this.setState({body: <VoteVisualizer />});
   }
 
   checkContest() {
