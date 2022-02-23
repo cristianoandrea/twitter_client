@@ -4,7 +4,7 @@ import dbmanager
 
 
 class Tale:
-    def __init__(self, id, creator: str, text: str):
+    def __init__(self, id: int, creator: str, text: str):
         self._id = id
         self._creator: str = creator
         self._text: str = text
@@ -34,7 +34,7 @@ class Tale:
 
 
 class Contest:
-    def __init__(self, id, tales: list, organizer: str, name: str):
+    def __init__(self, id: int, tales: list, organizer: str, name: str):
         self._id = id
         self._tales: list = tales
         self._organizer: str = organizer
@@ -60,8 +60,11 @@ class Contest:
     def is_active(self):
         return True
 
-    def add_tale(self, tale: Tale):
+    def add_tale(self, tale: int):
         self._tales.append(tale)
+
+    def has_tale(self, tale_id: int):
+        return tale_id in self.tales
 
     def toDict(self):
         d = {}
@@ -86,11 +89,10 @@ tales: dict[int, Tale] = {}
 def module_init():
     global initialized
 
-    for tale_dict in dbmanager.load_tales():
-        tale = Tale.fromDict(tale_dict)
-        tales[tale.id] = tale
-
     if not initialized:
+        for tale_dict in dbmanager.load_tales():
+            tale = Tale.fromDict(tale_dict)
+            tales[tale.id] = tale
         for contest_dict in dbmanager.load_contests():
             contest = Contest.fromDict(contest_dict)
             contests[contest.id] = contest
@@ -160,6 +162,41 @@ def is_tale_registered(tale_id: int) -> bool:
 
 def is_contest_registered(contest_id: int) -> bool:
     return contest_id in contests
+
+
+def make_vote_object(contest_id, tweets):
+    MAX_VOTES = 10
+    votes = {}
+    #chiavi twitter username, valori il numero di voti in questo contest
+    user_count = {}
+
+    try:
+        c = contests[contest_id]
+        for tweet in tweets:
+            try:
+                indicated_contest = int(tweet['full_text'].split(' ')[1][1:])
+                if indicated_contest != contest_id:
+                    print(
+                        f'indicato: {indicated_contest}, cercato {contest_id}')
+                    continue
+                username: str = tweet['user']['screen_name']
+                if not username in user_count:
+                    user_count[username] = 0
+
+                if user_count[username] < MAX_VOTES:
+                    user_count[username] += 1
+                    tale_id = int(tweet['full_text'].split(' ')[2][1:])
+                    if not c.has_tale(tale_id):
+                        continue
+                    if not tale_id in votes:
+                        votes[tale_id] = 0
+                    votes[tale_id] += 1
+            except:
+                continue
+
+        return votes
+    except KeyError:
+        return {}
 
 
 module_init()
