@@ -15,15 +15,17 @@ import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 
 import TweetList from '../components/TweetList';
-import WordCl from '../components/WordCl';
+import WordCloud from '../components/WordCloud';
+
+import App from '../components/Map_fun.js'
 
 
 
 class InputForm extends Component {
-  /*constructor(props) {
+  constructor(props) {
     super(props);
     //this.father = props.father;
-  }*/
+  }
 
   render() {
     return (
@@ -47,8 +49,9 @@ class InputForm extends Component {
                   defaultValue="female"
                   name="mode"
                 >
-                  <FormControlLabel value="content" control={<Radio />} label="Contenuto" checked/>
+                  <FormControlLabel value="content" control={<Radio />} label="Contenuto" />
                   <FormControlLabel value="user" control={<Radio />} label="Utente" />
+                  <FormControlLabel value="place" control={<Radio />} label="Luogo" />
                 </RadioGroup>
               </FormControl>
             </Grid>
@@ -169,7 +172,7 @@ class TwitterSection extends Component {
         updateView.viewContent = <TweetList tweets={this.tweets} />;
         break;
       case "wordCloud":
-        updateView.viewContent = <WordCl tweets={this.tweets} />;
+        updateView.viewContent = <TweetList tweets={this.tweets} />;
         break;
       default:
         break;
@@ -180,7 +183,7 @@ class TwitterSection extends Component {
   render() {
     return (
       <div>
-
+        
         {/*componente che permette di selezionare i filtri per i tweet da mostrare*/}
         <InputForm father={this} sx={{marginTop: 100}} />
 
@@ -207,6 +210,8 @@ class TwitterSection extends Component {
                 })}
               </Select>
             </FormControl>
+
+            
           </Box>
           </Grid>
 
@@ -214,7 +219,7 @@ class TwitterSection extends Component {
             {this.state.viewContent}
           </Grid>
         </Grid>
-
+        <App tweets={this.tweets}/>
       </div>
     );
   }
