@@ -101,6 +101,15 @@ def get_contests():
     return fl.jsonify(contest.get_contest_list(True))
 
 
+@server.route('/contests/votes', methods=['GET'])
+def get_votes_of():
+    contest_id: str = fl.request.args.get('contest')
+    tweets = tc.search_votes(contest_id)
+    obj = contest.make_vote_object(int(contest_id), tweets)
+    print(obj)
+    return obj
+
+
 @server.route('/tales', methods=['POST'])
 def post_tale():
     creator: str = fl.request.form.get('creator')
