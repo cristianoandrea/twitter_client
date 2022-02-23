@@ -147,5 +147,22 @@ def search_by_username_with_content(username: str, content: str, amount: int = M
     return make_query(query, amount)
 
 
-def search_by_hashtag():
-    pass
+def search_by_hashtag(hashtag: str, amount: int) -> list[dict]:
+    query = f'from:{hashtag} - filter:retweets'
+    """
+    found_tweets = api.search_tweets(q = hashtag, tweet_mode = 'extended', count = amount)
+    for tweet in found_tweets:
+        printTweet(tweet)
+    return listify_tweets(found_tweets)
+    """
+    return make_query(query, amount)
+
+
+def search_votes(contest):
+    """
+    Raccoglie tutti i voti del contest di id ''contest'' e li ritorna sotto forma di stringa
+
+    in seconda battuta va aggiunto il controllo che per ogni nome utente vanno presi solo gli ultimi 10 tweet che ha fatto
+    """
+    d = search_by_content(f'#IngSof2021vote #{contest}')
+    return d
