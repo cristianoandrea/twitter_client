@@ -15,7 +15,7 @@ import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 
 import TweetList from '../components/TweetList';
-import WordCloud from '../components/WordCloud';
+import WordCloud from '../components/WordCl';
 
 import App from '../components/Map_fun.js'
 
@@ -174,6 +174,9 @@ class TwitterSection extends Component {
       case "wordCloud":
         updateView.viewContent = <TweetList tweets={this.tweets} />;
         break;
+      case "map":
+          updateView.viewContent = <App tweets={this.tweets} />;
+          break;
       default:
         break;
     }
@@ -183,7 +186,7 @@ class TwitterSection extends Component {
   render() {
     return (
       <div>
-        
+
         {/*componente che permette di selezionare i filtri per i tweet da mostrare*/}
         <InputForm father={this} sx={{marginTop: 100}} />
 
@@ -211,7 +214,7 @@ class TwitterSection extends Component {
               </Select>
             </FormControl>
 
-            
+
           </Box>
           </Grid>
 
@@ -219,7 +222,6 @@ class TwitterSection extends Component {
             {this.state.viewContent}
           </Grid>
         </Grid>
-        <App tweets={this.tweets}/>
       </div>
     );
   }
