@@ -40,3 +40,13 @@
     transform: rotate(360deg);
   }
 }
+
+
+.leaflet-container{
+
+  width: 60vw;
+  height: 80vh;
+  margin-top: 8em;
+  margin-right: 2em;
+  margin-left: 0em;
+}
