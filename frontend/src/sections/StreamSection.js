@@ -14,7 +14,7 @@ import TweetList from '../components/TweetList';
 
 
 
- 
+
 class StreamSection extends Component{
     constructor(props) {
         super(props)
@@ -23,89 +23,50 @@ class StreamSection extends Component{
         }
 
     this.tweets=[];
-    
-        
+
+
     }
 
-
-    get_things(){
-    
-        var index = window.location.href.indexOf('?');
-        if (index !== -1){
-            var queryString = window.location.href.substr(index);
-            fetch('http://127.0.0.1:5000/stream${queryString}',{
-            method: 'GET',
-            headers: {
-            'Content-Type': 'application/json'
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            console.log(data);
-            this.tweets.append(data)
-        })
-        .catch(e => {
-            console.log(e);
-        });
-    }
-    
-}
-
-    componentDidMount(){
-        
-        console.log("updating...")
-        var index = window.location.href.indexOf('?');
-        setInterval(()=>{
+    fetchData = ()=>{
+            var index = window.location.href.indexOf('?');
+            console.log("eheh..")
             //var queryString = window.location.href.substr(index);
-            var queryString="?by=ucraina"
+            var queryString= "?by=roma"
             fetch("http://127.0.0.1:5000/stream"+ queryString,{
             method: 'GET',
             headers: {
             'Content-Type': 'application/json',
             'Access-Control-Allow-Origin' : '*'
             }
-        })
-        .then(response => response.json())
-        .then(data => {
-            console.log(data);
-            this.tweets.append(data)
-        })
-        .catch(e => {
-            console.log(e);
-        });
-        }, 5000);
-           
-    }
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log("chissà....")
+                console.log(data);
+                this.tweets.append(data)
+            })
+            .catch(e => {
+                console.log("diocane.....")
+                console.log(e);
+            });
+        }
 
-    componentDidUpdate(){
-        
-        console.log("updating...")
-        var index = window.location.href.indexOf('?');
-        setInterval(()=>{
-            var queryString = window.location.href.substr(index);
-            fetch("http://127.0.0.1:5000/stream?"+ queryString,{
-            method: 'GET',
-            headers: {
-            'Content-Type': 'application/json'
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            console.log(data);
-            this.tweets.append(data)
-        })
-        .catch(e => {
-            console.log(e);
-        });
-        }, 5000);
-           
-    }
+
+         componentDidMount(){
+
+            //await this.fetchData();
+
+            setInterval(()=>{
+              this.fetchData()
+            }, 5000*2);
+
+        }
 
     render(){
 
         return(
             <div>
-                
+
                 <form method="GET" action="/stream">
 
                     <TextField name="by" label="Standard" variant="standard" />
@@ -113,10 +74,10 @@ class StreamSection extends Component{
 
                     <Button>Search</Button>
                     <Button>Stop</Button>
-                    
+
                 </form>
 
-                
+
 
             </div>
         );
@@ -156,5 +117,5 @@ var index = window.location.href.indexOf('?');
 
 
 
-        
+
 */
