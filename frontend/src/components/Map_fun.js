@@ -105,43 +105,17 @@ function App(props) {
       }
     ]
 
-    const [tweets, setTweets] = useState(tweets_const)
+    //const [tweets, setTweets] = useState(props.tweets)
+    const [tweets, setTweets] = useState([])
 
-
+    
     useEffect(()=>{
-        
-        const url_pt1 = "https://nominatim.openstreetmap.org/search?q="
-        const url_pt2 = "&format=geojson"
-        const url_request = url_pt1 + luogo + url_pt2;
-        const tmp = [];
 
-        //impostazioni per il fetch
-        var requestOptions = {
-            method: 'GET',
-            redirect: 'follow'
-        };
-        fetch(url_request, requestOptions)
-            .then(response => {
-                //qui ritorna una promessa
-                return response.json();
-            })
-            .then(data => {
-                //qui si elabora il json ottenuto
-                for (const i in data.features) {
-                    tmp.push({
-                        id: i,
-                        name: data.features[i].properties.display_name,
-                        lat: data.features[i].geometry.coordinates[1],
-                        long: data.features[i].geometry.coordinates[0]
-                    })
-                    console.log(tmp[i].name)
-                }
-                //a fine ciclo ho in tmp tutti i luoghi ritornati dall'api
-                setPlaces(tmp);
-                
-            })
-            .catch(error => console.log('error', error));
-    },[luogo])
+        setTweets(props.tweets)
+
+
+
+    },[])
 
 
 
@@ -152,11 +126,13 @@ function App(props) {
 
   const [changedCoords, setChangedCoords] = useState({
     lat: 44.498955,
+    //lat:{tweets[0].place.lat},
+    //lng:{tweets[0].place.long}
     lng: 11.327591,
   });
-  
+
   const [placesClicked, setPlacesClicked] = useState(false);
-  
+
   const locatePlaces = (id) => {
     setPlacesClicked(true);
     const findLocation = places.find((exercise) => {
@@ -173,7 +149,7 @@ function App(props) {
 
   const locateTweets = (t_long, t_lat) => {
     setPlacesClicked(true);
-    
+
     //console.log(findLocation);
 
     setChangedCoords({
@@ -185,13 +161,13 @@ function App(props) {
   const {register, handleSubmit} = useForm();
 
   return (
-      
+
     <React.Fragment>
 
       <MapContainer
         center={[initialCoords.latitude, initialCoords.longitude]}
-        zoom={12}
-        scrollWheelZoom={false}
+        zoom={8}
+        scrollWheelZoom={true}
         style={{ width: '100vw', height: '50vh' }}
       >
         <TileLayer
@@ -200,28 +176,40 @@ function App(props) {
         />
         <UpdateMapCentre mapCentre={
            //idealmente qui ci piazzo la posizione del tweet in posizione 0
-           //<Marker position={tweet.place.lat, tweet.place.lat}></Marker>
-           createMarker(tweets_const[0].place.lat,tweets_const[0].place.long)} />
+           //<Marker position={tweet.place.lat, tweet.place.lat}></Marker
+           createMarker(tweets_const[0].place.lat, tweets_const[0].place.long)
+           //41.8931203,
+           //12.4827321
+           /*setChangedCoords({
+             lat:tweets[0].place.lat,
+             lng: tweets[0].place.long,
+           });*/
+          } />
 
         {
+           //locateTweets(first.place.lat,first.place.long);
           tweets.map(tweet=>{
             return(
-              <Marker position={createMarker(tweet.place.lat,tweet.place.long)}>
+              <div>
+
+              <Marker position={
+                createMarker(tweet.place.lat,tweet.place.long)}>
                 <Popup>
                   {tweet.full_text}
                 </Popup>
               </Marker>
+              </div>
             )
           })
         }
 
-        
-      </MapContainer>    
-      
+
+      </MapContainer>
+
 
     )
-      
-      
+
+
     </React.Fragment>
   );
 }
@@ -236,13 +224,13 @@ export default App
           setLuogo(data.luogo)
           console.log(luogo)
         })}>
-            <Input 
-                type='text' 
+            <Input
+                type='text'
                 {...register("luogo")}
                 placeholder="Scrivi un luogo"
-                //onChange={e=>setLuogo(e.target.value)} 
+                //onChange={e=>setLuogo(e.target.value)}
                 />
-              
+
             <Button variant="contained" type='submit' >Search</Button>
         </form>
 
@@ -252,7 +240,7 @@ export default App
         {places.map(place=>{
             return(
                 <div key={place.id}>
-                    <div 
+                    <div
                         className="places-click"
                         onClick={()=>locatePlaces(place.id)}>
 
@@ -266,13 +254,13 @@ export default App
                             </CardContent>
 
                           </Card>
-                          
-                        
+
+
                     </div>
-                    
+
                 </div>
             )
-          
-      })} 
+
+      })}
 
 */
