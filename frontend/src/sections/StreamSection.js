@@ -27,23 +27,29 @@ class StreamSection extends Component{
 
     }
 
-    fetchData = ()=>{
+    fetchData = async ()=>{
             var index = window.location.href.indexOf('?');
             console.log("eheh..")
             //var queryString = window.location.href.substr(index);
             var queryString= "?by=roma"
-            fetch("http://127.0.0.1:5000/stream"+ queryString,{
+            await fetch("http://127.0.0.1:5000/stream"+ queryString,{
             method: 'GET',
             headers: {
             'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin' : '*'
+            'Access-Control-Allow-Origin' : '*',
+            'Accept': 'application/json'
             }
             })
-            .then(response => response.json())
+            .then(response =>{
+              console.log("diobo");
+              response.json()
+              //console.log(response.json())
+            } )
             .then(data => {
                 console.log("chissà....")
-                console.log(data);
-                this.tweets.append(data)
+                const ao=data
+                console.log(ao);
+                this.tweets.push(data)
             })
             .catch(e => {
                 console.log("diocane.....")
@@ -52,11 +58,11 @@ class StreamSection extends Component{
         }
 
 
-         componentDidMount(){
+         async componentDidMount(){
 
-            //await this.fetchData();
+            await this.fetchData();
 
-            setInterval(()=>{
+            await setInterval(()=>{
               this.fetchData()
             }, 5000*2);
 
