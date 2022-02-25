@@ -1,5 +1,6 @@
 import { Component } from 'react';
 import TextField from '@mui/material/TextField';
+import $ from 'jquery'
 import ButtonGroup from '@mui/material/ButtonGroup';
 import Button from '@mui/material/Button';
 import InputLabel from '@mui/material/InputLabel';
@@ -57,15 +58,28 @@ class StreamSection extends Component{
             });
         }
 
+        getjson= async ()=>{
+            var queryString= "?by=roma"
+            await $.getJSON("http://127.0.0.1:5000/stream"+ queryString, (data)=>{
+                console.log("daje")
+                console.log(data)
+                this.tweets.push(data)
+            } )
+
+        }
+
 
          async componentDidMount(){
 
             await this.fetchData();
+            //await this.getjson()
 
             await setInterval(()=>{
-              this.fetchData()
+                //this.getjson();
+                this.fetchData();
             }, 5000*2);
 
+            
         }
 
     render(){
