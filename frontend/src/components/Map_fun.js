@@ -32,18 +32,9 @@ function UpdateMapCentre(props: MapCentreProps) {
   return null;
 }
 
-//TODO: trovare modo di passare in input i tweet al componente
-//passare in input anche valore per cercare posti
-//idea è che se cerchi per luogo una volta che hai finito di digitare esce una tendina coi vari risultati
-//quando ne scegli uno e fai partire la ricerca a quel punto mandi la richiesta all'api
 
-//in barra di ricerca normale l'user digita il nome della città
-//da lì parte la funzione che trova le coordinate che dovrebbe cambiare l'url di modo tale da integrare una stringa del tipo
-//"lat, long, mi" che poi viene passata pari pari al backend
 
-//all'url passo il nome del posto e lavoro con l'api dal backend per poter ritornare la lista di tweets
-//provo anche ad inserire come primo record di ritorno anche le coordinate, ma je ne sais pas
-//il centro della mappa può essere il primo tweet geolocalizzato della lista
+
 function createMarker (lat, long) {
   return [lat, long]
 }
@@ -63,8 +54,8 @@ function App(props) {
         retweeted_status: {},
         full_text: 'CENTRO',
         place:{
-          lat:44.4938203,
-          long:11.3426327
+          lat:41.8933203,
+          long:12.4829321
         }
       },
       {
@@ -105,16 +96,13 @@ function App(props) {
       }
     ]
 
-    //const [tweets, setTweets] = useState(props.tweets)
     const [tweets, setTweets] = useState([])
 
     
     useEffect(()=>{
 
         setTweets(props.tweets)
-
-
-
+        
     },[])
 
 
@@ -126,8 +114,6 @@ function App(props) {
 
   const [changedCoords, setChangedCoords] = useState({
     lat: 44.498955,
-    //lat:{tweets[0].place.lat},
-    //lng:{tweets[0].place.long}
     lng: 11.327591,
   });
 
@@ -175,15 +161,8 @@ function App(props) {
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
         <UpdateMapCentre mapCentre={
-           //idealmente qui ci piazzo la posizione del tweet in posizione 0
-           //<Marker position={tweet.place.lat, tweet.place.lat}></Marker
+           
            createMarker(tweets_const[0].place.lat, tweets_const[0].place.long)
-           //41.8931203,
-           //12.4827321
-           /*setChangedCoords({
-             lat:tweets[0].place.lat,
-             lng: tweets[0].place.long,
-           });*/
           } />
 
         {
