@@ -14,8 +14,8 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import InboxIcon from '@mui/icons-material/MoveToInbox';
 import ListItemText from '@mui/material/ListItemText';
 import { styled } from '@mui/material/styles';
-
-
+import Map from './Map.js'
+import App from './Map_fun.js'
 
 
 
@@ -26,8 +26,8 @@ class Navbar extends Component {
       open: false
     };
     this.drawerWidth = 240;
-    this.siteSections = ['Twitter', 'Trivia', 'Contest letterario'];
-    this.sectionsUrl = ['/twitter', '/trivia', '/contest'];
+    this.siteSections = ['Twitter', 'Trivia', 'Contest letterario', 'Stream'];
+    this.sectionsUrl = ['/twitter', '/trivia', '/contest', '/stream'];
   }
 
   openDrawer() {
@@ -50,6 +50,8 @@ class Navbar extends Component {
       }
     }
   }
+
+  
 
   render() {
     const DrawerHeader = styled('div')(({ theme }) => ({
@@ -121,7 +123,13 @@ class Navbar extends Component {
           </List>
 
         </Drawer>
+
+          
+        
       </Box>
+
+               
+      
     );
   }
 }
