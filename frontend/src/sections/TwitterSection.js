@@ -15,7 +15,9 @@ import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 
 import TweetList from '../components/TweetList';
-import WordCloud from '../components/WordCl';
+import WordCl from '../components/WordCl';
+
+import Sent from  '../components/sentimentCalculate';
 
 import App from '../components/Map_fun.js'
 
@@ -131,12 +133,13 @@ class TwitterSection extends Component {
 
     //possibili metodi di visualizzazione dei risultati
     this.displayMethods = [
-      "tweet", "wordCloud", "map"
+      "tweet", "wordCloud", "map","sentiment_analysis"
     ]
     this.displayMethodsPrettyfied = {
       tweet: "Tweet",
       wordCloud: "Word Cloud",
-      map: "Mappa"
+      map: "Mappa",
+      sentiment_analysis:"Sentiment Analysis"
     }
   }
 
@@ -172,10 +175,13 @@ class TwitterSection extends Component {
         updateView.viewContent = <TweetList tweets={this.tweets} />;
         break;
       case "wordCloud":
-        updateView.viewContent = <TweetList tweets={this.tweets} />;
+        updateView.viewContent = <WordCl tweets={this.tweets} />;
         break;
       case "map":
           updateView.viewContent = <App tweets={this.tweets} />;
+          break;
+      case "sentiment_analysis":
+          updateView.viewContent = <Sent tweets={this.tweets} />;
           break;
       default:
         break;
@@ -213,8 +219,6 @@ class TwitterSection extends Component {
                 })}
               </Select>
             </FormControl>
-
-
           </Box>
           </Grid>
 
