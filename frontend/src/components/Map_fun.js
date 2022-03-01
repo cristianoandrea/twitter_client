@@ -98,11 +98,11 @@ function App(props) {
 
     const [tweets, setTweets] = useState([])
 
-    
+
     useEffect(()=>{
 
         setTweets(props.tweets)
-        
+
     },[])
 
 
@@ -154,23 +154,23 @@ function App(props) {
         center={[initialCoords.latitude, initialCoords.longitude]}
         zoom={8}
         scrollWheelZoom={true}
-        style={{ width: '100vw', height: '50vh' }}
+        style={{ width: '80vw', height: '55vh' }}
       >
         <TileLayer
           attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        <UpdateMapCentre mapCentre={
-           
-           createMarker(tweets_const[0].place.lat, tweets_const[0].place.long)
-          } />
+
 
         {
            //locateTweets(first.place.lat,first.place.long);
           tweets.map(tweet=>{
             return(
               <div>
+              <UpdateMapCentre mapCentre={
 
+                 createMarker(tweets[0].place.lat, tweets[0].place.long)
+                } />
               <Marker position={
                 createMarker(tweet.place.lat,tweet.place.long)}>
                 <Popup>
@@ -184,10 +184,6 @@ function App(props) {
 
 
       </MapContainer>
-
-
-    )
-
 
     </React.Fragment>
   );
