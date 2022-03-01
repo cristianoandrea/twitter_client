@@ -103,4 +103,4 @@ def save_contests(contests: list[dict]):
     save_list_of_records(contests, contests_path())
 
 def load_contests():
-    return load_list_of_contests(contests_path())
+    return load_list_of_records(contests_path())
